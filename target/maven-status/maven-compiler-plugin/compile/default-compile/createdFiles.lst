@@ -1,4 +1,4 @@
 gui\application\Frame.class
 gui\application\App.class
+gui\application\GUI.class
 gui\application\Panel.class
-gui\application\MainClass.class
