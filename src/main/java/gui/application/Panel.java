@@ -2,6 +2,7 @@ package gui.application;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import javax.swing.*;
 
@@ -14,14 +15,12 @@ public class Panel extends JPanel {
   int yOffset;
 
   // Initialize variables //
-  int x = 0;
-  int y = 0;
-  int r = 120;
-  double period = 0.05;
-  double radiusDouble;
-  int radius;
+  double x = 0;
+  double y = 0;
+  double r = 100;
+  double radius;
   int pointStartX = 500;
-  ArrayList<Integer> yValues = new ArrayList<Integer>(); // Stores y values of series
+  ArrayList<Double> yValues = new ArrayList<>(); // Stores y values of series
   double time = 0;
 
   public Panel() {
@@ -51,20 +50,20 @@ public class Panel extends JPanel {
     g2d.setPaint(new Color(1, 1, 1, 0.25f));
 
     for (int i = 0; i < 100; i++) {
-      int prevX = x;
-      int prevY = y;
+      double prevX = x;
+      double prevY = y;
 
       int n = i * 2 + 1;
 
       // Update x, y position and radius
-      radiusDouble = r * (4 / (n * Math.PI));
-      radius = (int) radiusDouble;
+      radius = r * (4 / (n * Math.PI));
       x += radius * Math.cos(n * time);
       y += radius * Math.sin(n * time);
 
       // Draw circle
-      g2d.drawOval(prevX - radius, prevY - radius, radius * 2, radius * 2);
-      g2d.drawLine((prevX), (prevY), x, y);
+      g2d.drawOval(
+          (int) (prevX - radius), (int) (prevY - radius), (int) radius * 2, (int) radius * 2);
+      g2d.drawLine((int) prevX, (int) prevY, (int) x, (int) y);
     }
     // Add points of yValues
     yValues.add(0, y);
@@ -72,11 +71,18 @@ public class Panel extends JPanel {
     // Stroke for vertices
     g2d.setPaint(Color.white);
 
-    g2d.drawLine(x, y, pointStartX, y);
+    g2d.drawLine((int) x, (int) y, pointStartX, (int) y);
 
     // Draw point at y
     for (int i = 0; i < yValues.size() - 1; i += 1) {
-      g2d.drawLine(i + pointStartX, yValues.get(i), i + 1 + pointStartX, yValues.get(i + 1));
+      g2d.draw(
+          new Line2D.Double(
+              i + pointStartX, yValues.get(i), i + 1 + pointStartX, yValues.get(i + 1)));
+      g2d.drawLine(
+          i + pointStartX,
+          yValues.get(i).intValue(),
+          i + 1 + pointStartX,
+          yValues.get(i + 1).intValue());
     }
 
     // Remove out of window points
