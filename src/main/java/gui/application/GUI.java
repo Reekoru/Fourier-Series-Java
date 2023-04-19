@@ -25,29 +25,35 @@ public class GUI implements Runnable {
   public void run() {
 
     double timePerFrame = 1000000000.0 / FPS_SET;
-    long prevFrame = System.nanoTime();
-    long currentFrame = System.nanoTime();
+
+    // For update / tick
+    long prevTime = System.nanoTime();
 
     // Check fps
     int frame = 0;
+    int updates = 0;
     long lastCheck = System.currentTimeMillis();
 
+    double deltaFrame = 0;
+
     while (true) {
-      currentFrame = System.nanoTime();
+      long currentTime = System.nanoTime();
 
-      // Check time passed and repaint
-      if (currentFrame - prevFrame >= timePerFrame) {
+      deltaFrame += (currentTime - prevTime) / timePerFrame;
+      prevTime = currentTime;
+
+      if (deltaFrame >= 1) {
         panel.repaint();
-        prevFrame = currentFrame;
-
         frame++;
+        deltaFrame--;
       }
 
       // Check fps
       if (System.currentTimeMillis() - lastCheck >= 1000) {
         lastCheck = System.currentTimeMillis();
-        System.out.println("FPS: " + frame);
+        System.out.println("FPS: " + frame + "| UPS: " + updates);
         frame = 0;
+        updates = 0;
       }
     }
   }
