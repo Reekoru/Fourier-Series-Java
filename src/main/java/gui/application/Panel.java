@@ -27,8 +27,6 @@ public class Panel extends JPanel {
 
   // Stores y value for wave
   ArrayList<Integer> wave = new ArrayList<Integer>();
-  ArrayList<Integer> xPoints = new ArrayList<Integer>();
-  ArrayList<Integer> yPoints = new ArrayList<Integer>();
 
   // This variable will count how many frames we have gone through
   double time = 0;
@@ -43,7 +41,8 @@ public class Panel extends JPanel {
     // Paint background
     super.paint(g);
     Graphics2D g2d = (Graphics2D) g;
-    double radius = 150 * (4 / (1 * Math.PI));
+    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
     // Transfrom origin
     xOffset = this.getWidth() / 7;
@@ -54,76 +53,40 @@ public class Panel extends JPanel {
 
     x = 0;
     y = 0;
-    radius = r * (4 / (1 * Math.PI));
 
-    for (int i = 0; i < 4; i++) {
-      int prevRadius = (int) radius;
+    for (int i = 0; i < 10; i++) {
       int prevX = x;
       int prevY = y;
-
-      xPoints.add(prevX);
-      yPoints.add(prevY);
 
       int n = i * 2 + 1;
 
       // Update x, y position and radius
       radius = r * (4 / (n * Math.PI));
 
-      x += (int) (radius * Math.cos(n * time) + radius);
-      y += (int) (radius * Math.sin(n * time) + radius);
+      x += (int) (radius * Math.cos(n * time));
+      y += (int) (radius * Math.sin(n * time));
 
       g2d.setStroke(new BasicStroke(1));
       g2d.setPaint(Color.white);
 
       // Draw circle
-      if (i < 1) {
-        g2d.drawOval(prevX - prevRadius, prevY - prevRadius, (int) radius * 2, (int) radius * 2);
-
-        g2d.drawLine((prevX), (prevY), (int) (x - radius), (int) (y - radius));
-      }
-      // Draw circle
-      else {
-        g2d.drawOval(
-            prevX - prevRadius - (int) (radius),
-            prevY - prevRadius - (int) (radius),
-            (int) radius * 2,
-            (int) radius * 2);
-
-        g2d.drawLine(
-            (prevX - prevRadius), (prevY - prevRadius), (int) (x - radius), (int) (y - radius));
-
-        if (i == 2) {
-          System.out.print("prevX: " + prevX);
-          System.out.print("\t prevRadius: " + prevRadius + "\n");
-        }
-      }
-
-      if (i > 4) {
-        System.out.println("PrevX: " + prevX);
-        // System.out.println("CircleCenterX: " + circleCenterX);;
-      }
+      g2d.drawOval(prevX - (int) radius, prevY - (int) radius, (int) radius * 2, (int) radius * 2);
+      g2d.drawLine((prevX), (prevY), (int) (x), (int) (y));
     }
 
     // Add points of wave
-    wave.add(0, (int) (y + pointRadius / 2 - radius));
+    wave.add(0, y);
 
-    g2d.drawLine(
-        (int) (x + pointRadius / 2),
-        (int) (y + pointRadius / 2),
-        pointStartX,
-        (int) (y + pointRadius / 2));
+    g2d.drawLine((int) (x), (int) (y), pointStartX, (int) (y));
 
     // Draw point at y
-    for (int i = 0; i < wave.size(); i++) {
-      g2d.drawLine((int) (i + pointStartX), wave.get(i), (int) (i + pointStartX), wave.get(i));
-    }
-
-    for (int i = 0; i < xPoints.size(); i++) {
-      g2d.drawLine(xPoints.get(i), yPoints.get(i), xPoints.get(i), yPoints.get(i));
+    for (int i = 0; i < wave.size() - 1; i++) {
+      g2d.drawLine(
+          (int) (i + pointStartX), wave.get(i), (int) (i + 1 + pointStartX), wave.get(i + 1));
     }
 
     // Remove out of window points
-    if (wave.size() > this.getWidth() - radius * 2) {
+    if (wave.size() > this.getWidth()) {
       wave.remove(wave.size() - 1);
     }
 
