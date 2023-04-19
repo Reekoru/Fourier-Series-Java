@@ -2,15 +2,36 @@ package gui.application;
 
 public class GUI implements Runnable {
 
-  private Panel panel;
+  /*
+   * Uncomment either panel and the panel in the GUI constructor
+   */
+
+  ///////// START /////////
+
+  // private Panel panel;
+  private FourierTransformPanel panel;
+
+  ////////// END //////////
+
   private Frame frame;
   private Thread thread;
 
   private final int FPS_SET = 120;
 
   public GUI() {
-    panel = new Panel();
-    frame = new Frame(panel);
+    /*
+     * Comment and uncomment panel for different panels
+     */
+
+    ///////// START /////////
+
+    // panel = new Panel();
+    panel = new FourierTransformPanel();
+
+    ////////// END //////////
+
+    frame = new Frame(panel, " Fourier Transform");
+
     panel.requestFocus();
 
     startLoop();
@@ -31,11 +52,11 @@ public class GUI implements Runnable {
 
     // Check fps
     int frame = 0;
-    int updates = 0;
     long lastCheck = System.currentTimeMillis();
 
     double deltaFrame = 0;
 
+    // Repaint loop
     while (true) {
       long currentTime = System.nanoTime();
 
@@ -45,15 +66,16 @@ public class GUI implements Runnable {
       if (deltaFrame >= 1) {
         panel.repaint();
         frame++;
+
+        // Reset frame with layover subframes for next iteration
         deltaFrame--;
       }
 
       // Check fps
       if (System.currentTimeMillis() - lastCheck >= 1000) {
         lastCheck = System.currentTimeMillis();
-        System.out.println("FPS: " + frame + "| UPS: " + updates);
+        // System.out.println("FPS: " + frame);
         frame = 0;
-        updates = 0;
       }
     }
   }
