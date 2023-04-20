@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import javax.swing.*;
 
 public class FourierTransformPanel extends JPanel {
@@ -22,7 +21,7 @@ public class FourierTransformPanel extends JPanel {
   ArrayList<Double> yValues = new ArrayList<>(); // Stores y values of series
   double time = 0;
 
-  ArrayList<Hashtable<String, Double>> fourierPointsY = new ArrayList<>();
+  Double[][] fourierPointsY;
 
   public FourierTransformPanel() {
     System.out.println("Panel: Fourier Transform \n\n");
@@ -33,24 +32,13 @@ public class FourierTransformPanel extends JPanel {
 
     ArrayList<Double> signal = new ArrayList<>();
 
-    int ind = 0;
-    /*for (Double i = 0.0; i < 10; i++) {
-      for (Double j = 0.0; j < 100; j++) {
-        signal.add(ind, 100.0);
-        ind++;
-      }
-      for (Double h = 0.0; h < 100; h++) {
-        signal.add(ind, -100.0);
-        ind++;
-      }
-    }*/
-
-    for (Double i = 0.0; i < 100; i++) {
-      signal.add(ind, i);
-      ind++;
+    // Generate signal
+    for (Double i = 0.0; i < 800.204; i++) {
+      signal.add(100 * Math.sin(i * 0.05) + 253 * Math.sin(i * 0.02));
     }
 
-    System.out.println(signal);
+    // Initialize size of array
+    fourierPointsY = new Double[signal.size()][];
 
     DFT dft = new DFT();
     fourierPointsY = dft.calculateDFT(signal);
@@ -80,13 +68,13 @@ public class FourierTransformPanel extends JPanel {
     /////// EPICYCLES //////
     ////////////////////////
 
-    for (int i = 0; i < fourierPointsY.size() - 1; i++) {
+    for (int i = 0; i < fourierPointsY.length - 1; i++) {
       double prevX = x;
       double prevY = y;
 
-      double frequency = fourierPointsY.get(i).get("frequency");
-      double phase = fourierPointsY.get(i).get("phase");
-      double radius = fourierPointsY.get(i).get("amplitude");
+      double frequency = fourierPointsY[i][2];
+      double radius = fourierPointsY[i][3];
+      double phase = fourierPointsY[i][4];
 
       x += radius * Math.cos(frequency * time + phase + Math.PI / 2);
       y += radius * Math.sin(frequency * time + phase + Math.PI / 2);
@@ -97,14 +85,13 @@ public class FourierTransformPanel extends JPanel {
       g2d.drawLine((int) prevX, (int) prevY, (int) x, (int) y);
     }
 
-    // System.out.println("Y: " + y);
-
     // Add points of yValues
     yValues.add(0, y);
 
     // Stroke for vertices
     g2d.setPaint(Color.white);
 
+    // Draw line from last circle to points
     g2d.drawLine((int) x, (int) y, pointStartX, (int) y);
 
     // Draw point at y
@@ -119,7 +106,7 @@ public class FourierTransformPanel extends JPanel {
       yValues.remove(yValues.size() - 1);
     }
 
-    final double dt = Math.PI * 2 / fourierPointsY.size();
+    final double dt = Math.PI * 2 / fourierPointsY.length;
     time += dt;
   }
 }

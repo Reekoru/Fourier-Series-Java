@@ -1,7 +1,7 @@
 package gui.application;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.Arrays;
 
 public class DFT {
   double realComp;
@@ -11,10 +11,11 @@ public class DFT {
     // Custructor
   }
 
-  public ArrayList<Hashtable<String, Double>> calculateDFT(ArrayList<Double> values) {
+  public Double[][] calculateDFT(ArrayList<Double> values) {
     final int N = values.size();
-    // ArrayList<ArrayList<Double>> X = new ArrayList<>();
-    ArrayList<Hashtable<String, Double>> X = new ArrayList<>();
+
+    // Stores the fourier transformed of the signal values
+    Double[][] X = new Double[N][];
 
     for (int k = 0; k < N; k++) {
 
@@ -24,6 +25,7 @@ public class DFT {
 
       for (int n = 0; n < N; n++) {
         double theta = (2 * Math.PI * k * n) / N;
+
         realComp += values.get(n) * Math.cos(theta);
         imaginaryComp -= values.get(n) * Math.sin(theta);
       }
@@ -32,22 +34,24 @@ public class DFT {
       realComp = realComp / N;
       imaginaryComp = imaginaryComp / N;
 
+      // Real and imaginary can be expressed in cartesian form
       double frequency = k;
       double amp = Math.sqrt(realComp * realComp + imaginaryComp * imaginaryComp);
       double phase = Math.atan2(imaginaryComp, realComp);
 
-      X.add(
-          k,
-          new Hashtable<String, Double>() {
-            {
-              put("real", realComp);
-              put("imgaginary", imaginaryComp);
-              put("frequency", frequency);
-              put("amplitude", amp);
-              put("phase", phase);
-            }
-          });
+      /* Stores all components of fourier transfored points
+       * INDEX:
+       * 0: Real component
+       * 1: Imaginary component
+       * 2: Frequency
+       * 3: Amplitude
+       * 4: Phase
+       */
+      X[k] = new Double[] {realComp, imaginaryComp, frequency, amp, phase};
     }
+
+    // Sorts the array based on amplitude
+    Arrays.sort(X, (a, b) -> Double.compare(b[3], a[3]));
 
     return X;
   }
