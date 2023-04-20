@@ -1,8 +1,0 @@
-gui\application\App.class
-gui\application\DFT.class
-gui\application\FourierTransformPanel.class
-gui\application\FourierTransformPanel$1.class
-gui\application\Frame.class
-gui\application\DFT$1.class
-gui\application\GUI.class
-gui\application\Panel.class
