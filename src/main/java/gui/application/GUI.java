@@ -16,7 +16,7 @@ public class GUI implements Runnable {
   private Frame frame;
   private Thread thread;
 
-  private final int FPS_SET = 120;
+  private final int FPS_SET = 60;
 
   public GUI() {
     /*

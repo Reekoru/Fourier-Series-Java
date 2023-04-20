@@ -1,7 +1,6 @@
 package gui.application;
 
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.Hashtable;
 
 public class DFT {
@@ -16,7 +15,6 @@ public class DFT {
     final int N = values.size();
     // ArrayList<ArrayList<Double>> X = new ArrayList<>();
     ArrayList<Hashtable<String, Double>> X = new ArrayList<>();
-    Dictionary<String, Double> dictionary = new Hashtable<>();
 
     for (int k = 0; k < N; k++) {
 

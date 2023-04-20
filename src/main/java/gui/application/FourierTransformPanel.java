@@ -5,7 +5,6 @@ import java.awt.event.*;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Random;
 import javax.swing.*;
 
 public class FourierTransformPanel extends JPanel {
@@ -34,18 +33,27 @@ public class FourierTransformPanel extends JPanel {
 
     ArrayList<Double> signal = new ArrayList<>();
 
-    Random rand = new Random();
-    for (int i = 1; i < 100; i++) {
-      signal.add(100 * Math.sin(Math.cos(i) / Math.sin(i)));
+    int ind = 0;
+    /*for (Double i = 0.0; i < 10; i++) {
+      for (Double j = 0.0; j < 100; j++) {
+        signal.add(ind, 100.0);
+        ind++;
+      }
+      for (Double h = 0.0; h < 100; h++) {
+        signal.add(ind, -100.0);
+        ind++;
+      }
+    }*/
+
+    for (Double i = 0.0; i < 100; i++) {
+      signal.add(ind, i);
+      ind++;
     }
 
     System.out.println(signal);
 
     DFT dft = new DFT();
     fourierPointsY = dft.calculateDFT(signal);
-    /*for (int i = 0; i < fourierPointsY.size(); i++) {
-      System.out.println(Integer.toString(i) + ": " + fourierPointsY.get(i));
-    }*/
   }
 
   public void paint(Graphics g) {
@@ -89,6 +97,8 @@ public class FourierTransformPanel extends JPanel {
       g2d.drawLine((int) prevX, (int) prevY, (int) x, (int) y);
     }
 
+    // System.out.println("Y: " + y);
+
     // Add points of yValues
     yValues.add(0, y);
 
@@ -110,6 +120,6 @@ public class FourierTransformPanel extends JPanel {
     }
 
     final double dt = Math.PI * 2 / fourierPointsY.size();
-    time -= dt;
+    time += dt;
   }
 }
