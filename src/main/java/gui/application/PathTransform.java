@@ -1,15 +1,15 @@
 package gui.application;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import javax.swing.*;
 
-public class PathTransform extends JPanel {
-
+public class PathTransform extends JPanel implements MouseListener, MouseMotionListener {
   // Set panel dimension
-  int width = 1280;
-  int height = 720;
+  final int WIDTH = 1280;
+  final int HEIGHT = 720;
 
   // Initialize variables //
   double time = 0;
@@ -18,14 +18,29 @@ public class PathTransform extends JPanel {
   Double[][] fourierPointsY;
   Double[][] fourierPointsX;
 
+  int xOffset1 = WIDTH / 7;
+  int yOffset1 = HEIGHT / 2;
+
+  // Set position of Y component of signal
+  Double x1;
+  Double y1;
+
+  int xOffset2 = WIDTH / 2;
+  int yOffset2 = HEIGHT / 7;
+
+  // Set location of X component of signal
+  Double x2;
+  Double y2;
+
   // Holds x y vector
   ArrayList<Double[][]> path = new ArrayList<>();
 
   public PathTransform() {
-    System.out.println("Panel: Path Transfrom \n\n");
-
+    System.out.println("Panel: Path Transfrom \n");
+    addMouseListener(this);
+    addMouseMotionListener(this);
     // Set panel properties
-    this.setPreferredSize(new Dimension(width, height));
+    this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
     this.setBackground(Color.black);
 
     ArrayList<Double> signalY = new ArrayList<>();
@@ -33,18 +48,10 @@ public class PathTransform extends JPanel {
 
     ReadCSV csv = new ReadCSV();
     ArrayList<ArrayList<Double>> signal =
-        csv.getCoordinates("src/main/java/gui/application/drawings/coordinator.csv");
+        csv.getCoordinates("src/main/java/gui/application/drawings/boat.csv");
 
     signalX = signal.get(0);
     signalY = signal.get(1);
-    // Generate signal
-    /*for (Double i = 0.0; i < 900; i++) {
-      signalY.add(100 * Math.cos(i * 0.05) + 253 * Math.cos(i * 0.02));
-    }
-
-    for (Double i = 0.0; i < 900; i++) {
-      signalX.add(100 * Math.sin(i * 0.05) + 253 * Math.sin(i * 0.02));
-    }*/
 
     // Initialize size of array
     fourierPointsY = new Double[signalY.size()][];
@@ -63,18 +70,13 @@ public class PathTransform extends JPanel {
     g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
-    // Transfrom origin depending on window size
-    int xOffset = this.getWidth() / 7;
-    int yOffset = this.getHeight() / 2;
-    // g2d.translate(xOffset, yOffset);
-
     // Set position of Y component of signal
-    Double x1 = Double.valueOf(xOffset);
-    Double y1 = Double.valueOf(yOffset);
+    x1 = Double.valueOf(xOffset1);
+    y1 = Double.valueOf(yOffset1);
 
     // Set location of X component of signal
-    Double x2 = x1 + 500;
-    Double y2 = y1 / 2;
+    x2 = Double.valueOf(xOffset2);
+    y2 = Double.valueOf(yOffset2);
 
     // Change stroke for circles
     g2d.setStroke(new BasicStroke(2));
@@ -83,9 +85,6 @@ public class PathTransform extends JPanel {
     // Draw and get vector of epicycle
     Double[] vectorX = drawEpicycle(g2d, x2, y2, 0.0, fourierPointsX);
     Double[] vectorY = drawEpicycle(g2d, x1, y1, Math.PI / 2, fourierPointsY);
-
-    // Get y component
-    y1 = vectorY[1];
 
     Double[][] components = {vectorX, vectorY};
 
@@ -118,6 +117,8 @@ public class PathTransform extends JPanel {
     }
   }
 
+  public void updateApp() {}
+
   public Double[] drawEpicycle(
       Graphics2D g2d, Double x, Double y, Double rotaion, Double[][] fourier) {
     /*
@@ -142,4 +143,49 @@ public class PathTransform extends JPanel {
 
     return new Double[] {x, y};
   }
+
+  boolean isMousePressed = false;
+
+  @Override
+  public void mouseClicked(MouseEvent e) {}
+
+  @Override
+  public void mousePressed(MouseEvent e) {
+    isMousePressed = true;
+  }
+
+  @Override
+  public void mouseReleased(MouseEvent e) {
+    isMousePressed = false;
+  }
+
+  @Override
+  public void mouseEntered(MouseEvent e) {}
+
+  @Override
+  public void mouseExited(MouseEvent e) {}
+
+  @Override
+  public void mouseDragged(MouseEvent e) {
+    int mouseX = e.getX();
+    int mouseY = e.getY();
+    int hitBoxSize = 50;
+
+    if ((mouseX > xOffset1 - hitBoxSize) && (mouseX < xOffset1 + hitBoxSize)) {
+      if (mouseY > yOffset1 - hitBoxSize && mouseY < yOffset1 + hitBoxSize) {
+        xOffset1 = mouseX;
+        yOffset1 = mouseY;
+      }
+    }
+
+    if ((mouseX > xOffset2 - hitBoxSize) && (mouseX < xOffset2 + hitBoxSize)) {
+      if (mouseY > yOffset2 - hitBoxSize && mouseY < yOffset2 + hitBoxSize) {
+        xOffset2 = mouseX;
+        yOffset2 = mouseY;
+      }
+    }
+  }
+
+  @Override
+  public void mouseMoved(MouseEvent e) {}
 }
