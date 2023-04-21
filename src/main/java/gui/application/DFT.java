@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class DFT {
-  double realComp;
-  double imaginaryComp;
 
   public DFT() {
     // Custructor
@@ -16,6 +14,8 @@ public class DFT {
 
     // Stores the fourier transformed of the signal values
     Double[][] X = new Double[N][];
+    double realComp;
+    double imaginaryComp;
 
     for (int k = 0; k < N; k++) {
 
@@ -30,7 +30,7 @@ public class DFT {
         imaginaryComp -= values.get(n) * Math.sin(theta);
       }
 
-      // Average contribution by N
+      // Get average
       realComp = realComp / N;
       imaginaryComp = imaginaryComp / N;
 
