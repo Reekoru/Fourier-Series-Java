@@ -31,12 +31,8 @@ public class FourierTransformPanel extends JPanel {
     ArrayList<Double> signalY = new ArrayList<>();
 
     // Generate signal
-    /*for (Double i = 0.0; i < 800.204; i++) {
-      signal.add(100 * Math.sin(i * 0.05) + 253 * Math.sin(i * 0.02));
-    }*/
-
-    for (Double i = 0.0; i < Math.PI * 100; i++) {
-      signalY.add(100 * Math.sin(i * 0.1));
+    for (Double i = 0.0; i < 800.204; i++) {
+      signalY.add(100 * Math.sin(i * 0.05) + 253 * Math.sin(i * 0.02));
     }
 
     // Initialize size of array
@@ -59,15 +55,14 @@ public class FourierTransformPanel extends JPanel {
     // g2d.translate(xOffset, yOffset);
 
     // Reset x and y values for next repaint
-    Double x = 0.0;
-    Double y = 0.0;
+    Double x = Double.valueOf(xOffset);
+    Double y = Double.valueOf(yOffset);
 
     // Change stroke for circles
     g2d.setStroke(new BasicStroke(2));
     g2d.setPaint(new Color(1, 1, 1, 0.25f));
 
-    Double[] vectorY =
-        drawEpicycle(g2d, 200.0, Double.valueOf(this.getHeight() / 2), Math.PI / 2, fourierPointsY);
+    Double[] vectorY = drawEpicycle(g2d, x, y, Math.PI / 2, fourierPointsY);
 
     y = vectorY[1];
 
@@ -77,7 +72,7 @@ public class FourierTransformPanel extends JPanel {
     g2d.setPaint(Color.white);
 
     // Draw line from last circle to points
-    // g2d.drawLine((int) Math.round(x), (int) Math.round(y), pointStartX, (int) Math.round(y));
+    g2d.drawLine((int) Math.round(x), (int) Math.round(y), pointStartX, (int) Math.round(y));
 
     // Draw point at y
     for (int i = 0; i < yValues.size() - 1; i += 1) {
