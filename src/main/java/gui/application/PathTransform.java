@@ -1,45 +1,59 @@
 package gui.application;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import javax.swing.*;
 
-public class FourierTransformPanel extends JPanel {
+public class PathTransform extends JPanel {
 
   // Set panel dimension
   int width = 1280;
   int height = 720;
-  int xOffset;
-  int yOffset;
 
   // Initialize variables //
   double time = 0;
   int pointStartX = 500;
-  ArrayList<Double> yValues = new ArrayList<>(); // Stores y values of series
 
   Double[][] fourierPointsY;
+  Double[][] fourierPointsX;
 
-  public FourierTransformPanel() {
-    System.out.println("Panel: Fourier Transform \n\n");
+  // Holds x y vector
+  ArrayList<Double[][]> path = new ArrayList<>();
+
+  public PathTransform() {
+    System.out.println("Panel: Path Transfrom \n\n");
 
     // Set panel properties
     this.setPreferredSize(new Dimension(width, height));
     this.setBackground(Color.black);
 
     ArrayList<Double> signalY = new ArrayList<>();
+    ArrayList<Double> signalX = new ArrayList<>();
 
+    ReadCSV csv = new ReadCSV();
+    ArrayList<ArrayList<Double>> signal =
+        csv.getCoordinates("src/main/java/gui/application/drawings/coordinator.csv");
+
+    signalX = signal.get(0);
+    signalY = signal.get(1);
     // Generate signal
-    for (Double i = 0.0; i < 800.204; i++) {
-      signalY.add(100 * Math.sin(i * 0.05) + 253 * Math.sin(i * 0.02));
+    /*for (Double i = 0.0; i < 900; i++) {
+      signalY.add(100 * Math.cos(i * 0.05) + 253 * Math.cos(i * 0.02));
     }
+
+    for (Double i = 0.0; i < 900; i++) {
+      signalX.add(100 * Math.sin(i * 0.05) + 253 * Math.sin(i * 0.02));
+    }*/
 
     // Initialize size of array
     fourierPointsY = new Double[signalY.size()][];
+    fourierPointsX = new Double[signalX.size()][];
 
+    // Calculate fourier transform of signal
     DFT dft = new DFT();
     fourierPointsY = dft.calculateDFT(signalY);
+    fourierPointsX = dft.calculateDFT(signalX);
   }
 
   public void paint(Graphics g) {
@@ -50,42 +64,50 @@ public class FourierTransformPanel extends JPanel {
     g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
     // Transfrom origin depending on window size
-    xOffset = this.getWidth() / 7;
-    yOffset = this.getHeight() / 2;
+    int xOffset = this.getWidth() / 7;
+    int yOffset = this.getHeight() / 2;
     // g2d.translate(xOffset, yOffset);
 
-    // Reset x and y values for next repaint
-    Double x = Double.valueOf(xOffset);
-    Double y = Double.valueOf(yOffset);
+    // Set position of Y component of signal
+    Double x1 = Double.valueOf(xOffset);
+    Double y1 = Double.valueOf(yOffset);
+
+    // Set location of X component of signal
+    Double x2 = x1 + 500;
+    Double y2 = y1 / 2;
 
     // Change stroke for circles
     g2d.setStroke(new BasicStroke(2));
-    g2d.setPaint(new Color(1, 1, 1, 0.25f));
+    g2d.setPaint(new Color(1, 1, 1, 0.1f));
 
     // Draw and get vector of epicycle
-    Double[] vectorY = drawEpicycle(g2d, x, y, Math.PI / 2, fourierPointsY);
+    Double[] vectorX = drawEpicycle(g2d, x2, y2, 0.0, fourierPointsX);
+    Double[] vectorY = drawEpicycle(g2d, x1, y1, Math.PI / 2, fourierPointsY);
 
     // Get y component
-    y = vectorY[1];
+    y1 = vectorY[1];
 
-    yValues.add(0, y);
+    Double[][] components = {vectorX, vectorY};
+
+    path.add(0, components);
+
+    // Draw line path of x and y epicycles
+    g2d.draw(new Line2D.Double(vectorX[0], vectorX[1], vectorX[0], vectorY[1]));
+    g2d.draw(new Line2D.Double(vectorY[0], vectorY[1], vectorX[0], vectorY[1]));
 
     // Stroke for vertices
     g2d.setPaint(Color.white);
 
-    // Draw line from last circle to points
-    g2d.drawLine((int) Math.round(x), (int) Math.round(y), pointStartX, (int) Math.round(y));
-
     // Draw point at y
-    for (int i = 0; i < yValues.size() - 1; i += 1) {
+    for (int i = 0; i < path.size() - 1; i += 1) {
       g2d.draw(
           new Line2D.Double(
-              i + pointStartX, yValues.get(i), i + 1 + pointStartX, yValues.get(i + 1)));
+              path.get(i)[0][0], path.get(i)[1][1], path.get(i + 1)[0][0], path.get(i + 1)[1][1]));
     }
 
     // Remove out of window points
-    if (yValues.size() > this.getWidth()) {
-      yValues.remove(yValues.size() - 1);
+    if (path.size() > fourierPointsY.length) {
+      path.remove(path.size() - 1);
     }
 
     final double dt = Math.PI * 2 / fourierPointsY.length;

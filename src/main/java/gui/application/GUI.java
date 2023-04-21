@@ -1,5 +1,7 @@
 package gui.application;
 
+import javax.swing.JPanel;
+
 public class GUI implements Runnable {
 
   /*
@@ -9,7 +11,7 @@ public class GUI implements Runnable {
   ///////// START /////////
 
   // private Panel panel;
-  private FourierTransformPanel panel;
+  private JPanel panel;
 
   ////////// END //////////
 
@@ -26,7 +28,8 @@ public class GUI implements Runnable {
     ///////// START /////////
 
     // panel = new Panel();
-    panel = new FourierTransformPanel();
+    // panel = new FourierTransformPanel();
+    panel = new PathTransform();
 
     ////////// END //////////
 
