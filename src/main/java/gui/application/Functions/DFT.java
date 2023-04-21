@@ -1,4 +1,4 @@
-package gui.application;
+package gui.application.Functions;
 
 import java.util.ArrayList;
 import java.util.Arrays;

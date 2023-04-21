@@ -1,4 +1,4 @@
-package gui.application;
+package gui.application.Functions;
 
 import java.io.*;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package gui.application;
+package gui.application.Panels;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -6,7 +6,7 @@ import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import javax.swing.*;
 
-public class Panel extends JPanel {
+public class FourierSeries extends JPanel {
 
   // Set panel dimension
   int width = 1280;
@@ -23,7 +23,7 @@ public class Panel extends JPanel {
   ArrayList<Double> yValues = new ArrayList<>(); // Stores y values of series
   double time = 0;
 
-  public Panel() {
+  public FourierSeries() {
     System.out.println("Panel: Fourier Series \n\n");
     // Set panel properties
     this.setPreferredSize(new Dimension(width, height));

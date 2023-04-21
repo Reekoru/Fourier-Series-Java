@@ -1,5 +1,6 @@
-package gui.application;
+package gui.application.Panels;
 
+import gui.application.Functions.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Line2D;
@@ -14,6 +15,7 @@ public class PathTransform extends JPanel implements MouseListener, MouseMotionL
   // Initialize variables //
   double time = 0;
   int pointStartX = 500;
+  Epicycles epicycles;
 
   Double[][] fourierPointsY;
   Double[][] fourierPointsX;
@@ -50,6 +52,7 @@ public class PathTransform extends JPanel implements MouseListener, MouseMotionL
     ArrayList<ArrayList<Double>> signal =
         csv.getCoordinates("src/main/java/gui/application/drawings/boat.csv");
 
+    // Store signal X and signal Y
     signalX = signal.get(0);
     signalY = signal.get(1);
 
@@ -61,6 +64,9 @@ public class PathTransform extends JPanel implements MouseListener, MouseMotionL
     DFT dft = new DFT();
     fourierPointsY = dft.calculateDFT(signalY);
     fourierPointsX = dft.calculateDFT(signalX);
+
+    // To generate epicycles
+    epicycles = new Epicycles();
   }
 
   public void paint(Graphics g) {
@@ -82,10 +88,8 @@ public class PathTransform extends JPanel implements MouseListener, MouseMotionL
     g2d.setStroke(new BasicStroke(2));
     g2d.setPaint(new Color(1, 1, 1, 0.1f));
 
-    // Draw and get vector of epicycle
-    Double[] vectorX = drawEpicycle(g2d, x2, y2, 0.0, fourierPointsX);
-    Double[] vectorY = drawEpicycle(g2d, x1, y1, Math.PI / 2, fourierPointsY);
-
+    Double[] vectorX = epicycles.draw(g2d, x2, y2, 0.0, fourierPointsX, time);
+    Double[] vectorY = epicycles.draw(g2d, x1, y1, Math.PI / 2, fourierPointsY, time);
     Double[][] components = {vectorX, vectorY};
 
     path.add(0, components);
@@ -117,32 +121,9 @@ public class PathTransform extends JPanel implements MouseListener, MouseMotionL
     }
   }
 
-  public void updateApp() {}
-
-  public Double[] drawEpicycle(
-      Graphics2D g2d, Double x, Double y, Double rotaion, Double[][] fourier) {
-    /*
-     * This method draws Epicyles of a fourier transform on an x
-     */
-    for (int i = 0; i < fourier.length - 1; i++) {
-      double prevX = x;
-      double prevY = y;
-
-      double frequency = fourier[i][2];
-      double radius = fourier[i][3];
-      double phase = fourier[i][4];
-
-      x += radius * Math.cos(frequency * time + phase + rotaion);
-      y += radius * Math.sin(frequency * time + phase + rotaion);
-
-      // Draw circle
-      g2d.drawOval(
-          (int) (prevX - radius), (int) (prevY - radius), (int) radius * 2, (int) radius * 2);
-      g2d.drawLine((int) prevX, (int) prevY, (int) Math.round(x), (int) Math.round(y));
-    }
-
-    return new Double[] {x, y};
-  }
+  ///////////////////////////////////////////////////////
+  //////////////// MOUSE EVENTS /////////////////////////
+  ///////////////////////////////////////////////////////
 
   boolean isMousePressed = false;
 

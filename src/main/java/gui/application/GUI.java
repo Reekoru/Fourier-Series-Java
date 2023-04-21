@@ -1,5 +1,6 @@
 package gui.application;
 
+import gui.application.Panels.*;
 import javax.swing.JPanel;
 
 public class GUI implements Runnable {
@@ -17,8 +18,8 @@ public class GUI implements Runnable {
 
     ///////// START /////////
 
-    // panel = new Panel();
-    // panel = new FourierTransformPanel();
+    // panel = new FourierSeries();
+    // panel = new FourierTransform();
     panel = new PathTransform();
 
     ////////// END //////////
@@ -35,41 +36,25 @@ public class GUI implements Runnable {
     thread.start();
   }
 
-  public void updates() {
-    ((PathTransform) panel).updateApp();
-  }
-
   @Override
   public void run() {
 
     double timePerFrame = 1000000000.0 / FPS_SET;
-    double timePerUpdate = 1000000000.0 / UPS_SET;
 
     // For updates / tick
     long prevTime = System.nanoTime();
 
     // Check fps
     int frames = 0;
-    int updates = 0;
     long lastCheck = System.currentTimeMillis();
 
     double deltaFrame = 0;
-    double deltaUpdate = 0;
 
     // Repaint loop
     while (true) {
       long currentTime = System.nanoTime();
 
       deltaFrame += (currentTime - prevTime) / timePerFrame;
-      deltaUpdate += (currentTime - prevTime) / timePerUpdate;
-
-      if (deltaUpdate >= 1) {
-        updates();
-        updates++;
-
-        // Reset frames with layover subframes for next iteration
-        deltaUpdate--;
-      }
       prevTime = currentTime;
 
       if (deltaFrame >= 1) {
@@ -83,9 +68,8 @@ public class GUI implements Runnable {
       // Check fps
       if (System.currentTimeMillis() - lastCheck >= 1000) {
         lastCheck = System.currentTimeMillis();
-        System.out.println("FPS: " + frames + "| UPS: " + updates);
+        System.out.println("FPS: " + frames);
         frames = 0;
-        updates = 0;
       }
     }
   }

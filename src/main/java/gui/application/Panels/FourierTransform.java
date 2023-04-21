@@ -1,12 +1,13 @@
-package gui.application;
+package gui.application.Panels;
 
+import gui.application.Functions.DFT;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import javax.swing.*;
 
-public class FourierTransformPanel extends JPanel {
+public class FourierTransform extends JPanel {
 
   // Set panel dimension
   int width = 1280;
@@ -21,7 +22,7 @@ public class FourierTransformPanel extends JPanel {
 
   Double[][] fourierPointsY;
 
-  public FourierTransformPanel() {
+  public FourierTransform() {
     System.out.println("Panel: Fourier Transform \n\n");
 
     // Set panel properties
