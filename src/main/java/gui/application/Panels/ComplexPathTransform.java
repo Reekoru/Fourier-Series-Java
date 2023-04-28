@@ -7,7 +7,7 @@ import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import javax.swing.*;
 
-public class PathTransform extends JPanel implements MouseListener, MouseMotionListener {
+public class ComplexPathTransform extends JPanel implements MouseListener, MouseMotionListener {
   // Set panel dimension
   final int WIDTH = 1280;
   final int HEIGHT = 720;
@@ -37,8 +37,8 @@ public class PathTransform extends JPanel implements MouseListener, MouseMotionL
   // Holds x y vector
   ArrayList<Double[][]> path = new ArrayList<>();
 
-  public PathTransform() {
-    System.out.println("Panel: Path Transfrom \n");
+  public ComplexPathTransform() {
+    System.out.println("Panel: Complex Path Transform \n");
     addMouseListener(this);
     addMouseMotionListener(this);
     // Set panel properties

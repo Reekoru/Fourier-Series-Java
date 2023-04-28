@@ -21,7 +21,8 @@ public class GUI implements Runnable {
     // panel = new FourierSeries();
     // panel = new FourierTransform();
     // panel = new PathTransform();
-    panel = new UserDrawnPath();
+    // panel = new UserDrawnPath();
+    panel = new ComplexPathTransform();
 
     ////////// END //////////
 

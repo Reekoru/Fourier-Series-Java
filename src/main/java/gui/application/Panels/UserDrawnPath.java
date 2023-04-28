@@ -37,13 +37,17 @@ public class UserDrawnPath extends JPanel implements MouseListener, MouseMotionL
   ArrayList<Double> signalY;
   ArrayList<Double> signalX;
 
+  // Whether in drawing mode or idle mode
   enum State {
     DRAW,
     IDLE
   };
 
   State state;
-  int skip = 2;
+
+  // How many points skipped in drawiwng
+  int skip = 1;
+
   // Holds x y vector
   ArrayList<Double[][]> path = new ArrayList<>();
   ArrayList<ArrayList<Double>> drawnPath = new ArrayList<>();
@@ -91,15 +95,17 @@ public class UserDrawnPath extends JPanel implements MouseListener, MouseMotionL
     g2d.setStroke(new BasicStroke(2));
     g2d.setPaint(new Color(1, 1, 1, 0.1f));
 
+    // Clear path when drawing is done
+    if (path.size() > fourierPointsY.length) {
+      path.clear();
+    }
+
+    // Set position of epicycle
     y1 = Double.valueOf(this.getHeight() / 10);
     x2 = Double.valueOf(this.getWidth() / 10);
 
     switch (state) {
       case IDLE:
-        // Clear path when drawing is done
-        if (path.size() > fourierPointsY.length) {
-          path.clear();
-        }
 
         // Get X and Y
         Double[] vectorX = epicycles.draw(g2d, x1, y1, 0.0, fourierPointsX, time, true);
@@ -115,6 +121,7 @@ public class UserDrawnPath extends JPanel implements MouseListener, MouseMotionL
 
         // Stroke for vertices
         g2d.setPaint(Color.white);
+
         // Draw point at y
         for (int i = 0; i < path.size() - 1; i += 1) {
           g2d.draw(
@@ -145,12 +152,6 @@ public class UserDrawnPath extends JPanel implements MouseListener, MouseMotionL
 
         break;
     }
-
-    // Remove out of window points
-    // if (path.size() > fourierPointsY.length) {
-    //   path.remove(path.size() - 1);
-    // }
-
     final double dt = Math.PI * 2 / fourierPointsY.length;
     time += dt;
 
@@ -216,35 +217,18 @@ public class UserDrawnPath extends JPanel implements MouseListener, MouseMotionL
   public void mouseDragged(MouseEvent e) {
     int mouseX = e.getX();
     int mouseY = e.getY();
-    int hitBoxSize = 50;
 
-    if ((mouseX > xOffset1 - hitBoxSize)
-        && (mouseX < xOffset1 + hitBoxSize)
-        && state == State.IDLE) {
-      if (mouseY > yOffset1 - hitBoxSize && mouseY < yOffset1 + hitBoxSize) {
-        xOffset1 = mouseX;
-        yOffset1 = mouseY;
-      }
-    } else if ((mouseX > xOffset2 - hitBoxSize)
-        && (mouseX < xOffset2 + hitBoxSize)
-        && state == State.IDLE) {
-      if (mouseY > yOffset2 - hitBoxSize && mouseY < yOffset2 + hitBoxSize) {
-        xOffset2 = mouseX;
-        yOffset2 = mouseY;
-      }
-    } else {
-      state = State.DRAW;
-      signalX.add(Double.valueOf(mouseX));
-      signalY.add(Double.valueOf(mouseY));
+    state = State.DRAW;
+    signalX.add(Double.valueOf(mouseX));
+    signalY.add(Double.valueOf(mouseY));
 
-      drawnPath.add(
-          new ArrayList<Double>() {
-            {
-              add(Double.valueOf(mouseX));
-              add(Double.valueOf(mouseY));
-            }
-          });
-    }
+    drawnPath.add(
+        new ArrayList<Double>() {
+          {
+            add(Double.valueOf(mouseX));
+            add(Double.valueOf(mouseY));
+          }
+        });
   }
 
   @Override
