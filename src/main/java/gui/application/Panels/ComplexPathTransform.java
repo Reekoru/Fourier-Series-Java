@@ -24,16 +24,8 @@ public class ComplexPathTransform extends JPanel implements MouseListener, Mouse
   int xOffset1 = WIDTH / 7;
   int yOffset1 = HEIGHT / 2;
 
-  // Set position of Y component of signal
-  Double x1;
-  Double y1;
-
   int xOffset2 = WIDTH / 2;
   int yOffset2 = HEIGHT / 7;
-
-  // Set location of X component of signal
-  Double x2;
-  Double y2;
 
   // Holds x y vector
   ArrayList<Double[]> path = new ArrayList<>();
@@ -48,7 +40,7 @@ public class ComplexPathTransform extends JPanel implements MouseListener, Mouse
 
     ReadCSV csv = new ReadCSV();
     ArrayList<ComplexNumber> signal =
-        csv.getComplexCoordinates("src/main/java/gui/application/Drawings/Bunny.csv", WIDTH / 2, HEIGHT / 2);
+        csv.getComplexCoordinates("src/main/java/gui/application/Drawings/Horse.csv", WIDTH / 2, HEIGHT / 2);
 
 
     // Calculate fourier transform of signal
@@ -66,9 +58,6 @@ public class ComplexPathTransform extends JPanel implements MouseListener, Mouse
     g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
-    // Set position of component of signal
-    x1 = Double.valueOf(xOffset1);
-    y1 = Double.valueOf(yOffset1);
     // Clear path when drawing is done
     if (path.size() >= complexPoints.length) {
       path.clear();
@@ -78,7 +67,7 @@ public class ComplexPathTransform extends JPanel implements MouseListener, Mouse
     g2d.setStroke(new BasicStroke(2));
     g2d.setPaint(new Color(1, 1, 1, 0.1f));
 
-    Double[] vectorX = epicycles.draw(g2d, Double.valueOf(WIDTH / 2), Double.valueOf(HEIGHT / 2), 0.0, complexPoints, time);
+    Double[] vectorX = epicycles.draw(g2d, WIDTH / 2.0, HEIGHT / 2.0, 0.0, complexPoints, time);
 
     path.add(vectorX);
 
