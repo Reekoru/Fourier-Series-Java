@@ -16,9 +16,9 @@ public class ComplexNumber {
   }
 
   public ComplexNumber multiply(ComplexNumber other) {
-    this.real = this.real * other.real - this.real * other.imaginary;
-    this.imaginary = this.real * other.imaginary + this.imaginary * other.real;
-    return new ComplexNumber(this.real, this.imaginary);
+    Double complexReal = this.real * other.real - this.imaginary * other.imaginary;
+    Double complexImag = this.real * other.imaginary + this.imaginary * other.real;
+    return new ComplexNumber(complexReal, complexImag);
   }
 
   public Double getAmplitude() {

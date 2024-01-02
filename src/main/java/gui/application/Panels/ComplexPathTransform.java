@@ -1,5 +1,6 @@
 package gui.application.Panels;
 
+import gui.application.Classes.ComplexNumber;
 import gui.application.Functions.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -18,7 +19,7 @@ public class ComplexPathTransform extends JPanel implements MouseListener, Mouse
   Epicycles epicycles;
 
   Double[][] fourierPointsY;
-  Double[][] fourierPointsX;
+  Double[][] complexPoints;
 
   int xOffset1 = WIDTH / 7;
   int yOffset1 = HEIGHT / 2;
@@ -35,7 +36,7 @@ public class ComplexPathTransform extends JPanel implements MouseListener, Mouse
   Double y2;
 
   // Holds x y vector
-  ArrayList<Double[][]> path = new ArrayList<>();
+  ArrayList<Double[]> path = new ArrayList<>();
 
   public ComplexPathTransform() {
     System.out.println("Panel: Complex Path Transform \n");
@@ -45,25 +46,14 @@ public class ComplexPathTransform extends JPanel implements MouseListener, Mouse
     this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
     this.setBackground(Color.black);
 
-    ArrayList<Double> signalY = new ArrayList<>();
-    ArrayList<Double> signalX = new ArrayList<>();
-
     ReadCSV csv = new ReadCSV();
-    ArrayList<ArrayList<Double>> signal =
-        csv.getCoordinates("src/main/java/gui/application/drawings/boat.csv");
+    ArrayList<ComplexNumber> signal =
+        csv.getComplexCoordinates("src/main/java/gui/application/Drawings/Bunny.csv", WIDTH / 2, HEIGHT / 2);
 
-    // Store signal X and signal Y
-    signalX = signal.get(0);
-    signalY = signal.get(1);
-
-    // Initialize size of array
-    fourierPointsY = new Double[signalY.size()][];
-    fourierPointsX = new Double[signalX.size()][];
 
     // Calculate fourier transform of signal
     DFT dft = new DFT();
-    fourierPointsY = dft.calculateDFT(signalY);
-    fourierPointsX = dft.calculateDFT(signalX);
+    complexPoints = dft.calculateComplexDFT(signal);
 
     // To generate epicycles
     epicycles = new Epicycles();
@@ -76,16 +66,11 @@ public class ComplexPathTransform extends JPanel implements MouseListener, Mouse
     g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
-    // Set position of Y component of signal
+    // Set position of component of signal
     x1 = Double.valueOf(xOffset1);
     y1 = Double.valueOf(yOffset1);
-
-    // Set location of X component of signal
-    x2 = Double.valueOf(xOffset2);
-    y2 = Double.valueOf(yOffset2);
-
     // Clear path when drawing is done
-    if (path.size() >= fourierPointsY.length) {
+    if (path.size() >= complexPoints.length) {
       path.clear();
     }
 
@@ -93,15 +78,9 @@ public class ComplexPathTransform extends JPanel implements MouseListener, Mouse
     g2d.setStroke(new BasicStroke(2));
     g2d.setPaint(new Color(1, 1, 1, 0.1f));
 
-    Double[] vectorX = epicycles.draw(g2d, x2, y2, 0.0, fourierPointsX, time);
-    Double[] vectorY = epicycles.draw(g2d, x1, y1, Math.PI / 2, fourierPointsY, time);
-    Double[][] components = {vectorX, vectorY};
+    Double[] vectorX = epicycles.draw(g2d, Double.valueOf(WIDTH / 2), Double.valueOf(HEIGHT / 2), 0.0, complexPoints, time);
 
-    path.add(0, components);
-
-    // Draw line path of x and y epicycles
-    g2d.draw(new Line2D.Double(vectorX[0], vectorX[1], vectorX[0], vectorY[1]));
-    g2d.draw(new Line2D.Double(vectorY[0], vectorY[1], vectorX[0], vectorY[1]));
+    path.add(vectorX);
 
     // Stroke for vertices
     g2d.setPaint(Color.white);
@@ -110,10 +89,10 @@ public class ComplexPathTransform extends JPanel implements MouseListener, Mouse
     for (int i = 0; i < path.size() - 1; i += 1) {
       g2d.draw(
           new Line2D.Double(
-              path.get(i)[0][0], path.get(i)[1][1], path.get(i + 1)[0][0], path.get(i + 1)[1][1]));
+              path.get(i)[0], path.get(i)[1], path.get(i + 1)[0], path.get(i + 1)[1]));
     }
 
-    final double dt = Math.PI * 2 / fourierPointsY.length;
+    final double dt = Math.PI * 2 / complexPoints.length;
     time += dt;
 
     if (time >= 2 * Math.PI) {

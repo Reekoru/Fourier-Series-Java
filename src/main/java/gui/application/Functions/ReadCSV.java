@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
+import gui.application.Classes.ComplexNumber;
+
 public class ReadCSV {
-  public ArrayList<ArrayList<Double>> getCoordinates(String path) {
+  public ArrayList<ArrayList<Double>> getCoordinates(String path, double offsetx, double offsety) {
 
     String[] token;
 
@@ -29,8 +31,8 @@ public class ReadCSV {
         Double[] tokenToDouble = Arrays.stream(token).map(Double::valueOf).toArray(Double[]::new);
 
         // Add x and y components
-        x.add(tokenToDouble[0]);
-        y.add(tokenToDouble[1]);
+        x.add(tokenToDouble[0] - offsetx);
+        y.add(tokenToDouble[1]- offsety);
       }
 
       scanner.close();
@@ -44,5 +46,15 @@ public class ReadCSV {
     coordinates.add(y);
 
     return coordinates;
+  }
+
+  public ArrayList<ComplexNumber> getComplexCoordinates(String path, double offsetx, double offsety) {
+    ArrayList<ArrayList<Double>> coordinates = getCoordinates(path, offsetx, offsety);
+    ArrayList<ComplexNumber> complex = new ArrayList<>();
+
+    for (int i = 0; i < coordinates.get(0).size(); i++) {
+      complex.add(new ComplexNumber(coordinates.get(0).get(i), coordinates.get(1).get(i)));
+    }
+    return complex;
   }
 }

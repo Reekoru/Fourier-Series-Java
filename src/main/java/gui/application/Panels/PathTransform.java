@@ -50,7 +50,7 @@ public class PathTransform extends JPanel implements MouseListener, MouseMotionL
 
     ReadCSV csv = new ReadCSV();
     ArrayList<ArrayList<Double>> signal =
-        csv.getCoordinates("src/main/java/gui/application/drawings/boat.csv");
+        csv.getCoordinates("src/main/java/gui/application/Drawings/Bunny.csv", WIDTH / 2, HEIGHT / 2);
 
     // Store signal X and signal Y
     signalX = signal.get(0);
